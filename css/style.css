@@ -1,0 +1,772 @@
+/* ==========================================================================
+   1. VARIABLES & RESET
+   ========================================================================== */
+:root {
+    /* Colors */
+    --bg-color: #f8f8f8;
+    --text-color: #111;
+    --border-color: #111;
+
+    /* Layout */
+    --nav-width: 250px;
+    /* 오른쪽 내비게이션 너비 */
+
+    /* Fonts */
+    --font-head: 'Oswald', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    /* 본문용 Graphik 대체 폰트 */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    /* 가로 스크롤 방지 */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    /* 이미지 하단 미세 여백 제거 */
+}
+
+/* ==========================================================================
+   2. SCROLLBAR DESIGN (Raw & Structural Beam)
+   ========================================================================== */
+/* Webkit 기반 브라우저 (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 12px;
+    /* 존재감 있는 두께 */
+    background-color: #fff;
+    /* 트랙 배경 */
+}
+
+/* 스크롤바 막대 (Thumb) */
+::-webkit-scrollbar-thumb {
+    background-color: #000;
+    /* 완전한 검정 */
+    border: 3px solid #fff;
+    /* 흰색 테두리로 떠있는 느낌 (선택사항) */
+    border-radius: 0;
+    /* ✨ 핵심: 직각 처리로 건축적인 느낌 강조 */
+}
+
+/* 마우스 호버 시 */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #333;
+    border-color: #fff;
+}
+
+/* Firefox 전용 */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #111 #fff;
+}
+
+/* ==========================================================================
+   3. LAYOUT STRUCTURE
+   Flex Container: Content(Left) + Navigation(Right)
+   ========================================================================== */
+.main-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* [Left] Content Area */
+.content {
+    flex: 1;
+    /* 남은 공간 모두 차지 */
+    border-right: 1px solid var(--border-color);
+    /* 내비게이션과 경계선 */
+}
+
+/* [Right] Navigation Area (Sticky) */
+.navigation {
+    width: var(--nav-width);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* 로고 위, 메뉴 아래 배치 */
+    padding: 40px;
+    background-color: var(--bg-color);
+    border-right: 1px solid var(--border-color);
+}
+
+/* --- Navigation Internal Styles --- */
+.nav-logo {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    line-height: 0.9em;
+    color: #111;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #999;
+    /* 기본 회색 */
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    transition: 0.3s;
+    cursor: pointer;
+
+    position: relative;
+    /* ✨ 자식요소(진행바)의 기준점 */
+    padding-bottom: 5px;
+    /* 바가 들어갈 공간 확보 */
+    display: inline-block;
+}
+
+/* 네비게이션 진행바 (Progress Bar) */
+.nav-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background-color: #000;
+    width: 0%;
+    /* JS로 제어 */
+    transition: width 0.1s linear;
+}
+
+/* 활성화 상태 */
+.nav-link:hover,
+.nav-link.active {
+    color: var(--text-color);
+    font-weight: 700;
+    transform: translateX(-5px);
+    /* 살짝 왼쪽 이동 */
+}
+
+.nav-footer {
+    font-size: 0.8rem;
+    opacity: 0.5;
+    margin-top: auto;
+}
+
+/* ==========================================================================
+   4. SECTIONS (GLOBAL)
+   ========================================================================== */
+section {
+    min-height: 100vh;
+    padding: 80px 60px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* =========================================
+   GLOBAL: TEXT SELECTION (드래그 색상 변경)
+   ========================================= */
+
+::selection {
+    background-color: #333333;
+    color: #FFFFFF;
+}
+
+
+/* 파이어폭스 브라우저 호환성용 */
+::-moz-selection {
+    background-color: #333333;
+    color: #FFFFFF;
+}
+
+/* ==========================================================================
+   5. LANDING SECTION (HERO & PHYSICS)
+   ========================================================================== */
+.landing-section {
+    padding: 0 !important;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+/* 물리 엔진 캔버스 컨테이너 */
+#physics-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* 세로 스크롤 허용 설정 */
+#physics-container canvas {
+    touch-action: pan-y !important;
+    /* 좌우 막고 상하 스크롤 허용 */
+    cursor: grab;
+}
+
+#physics-container canvas:active {
+    cursor: grabbing;
+}
+
+/* 리셋 버튼 */
+#reset-btn {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    padding: 10px 20px;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 100;
+    text-transform: uppercase;
+    transition: transform 0.2s;
+}
+
+#reset-btn:hover {
+    transform: scale(1.1);
+}
+
+#reset-btn:active {
+    transform: scale(0.95);
+}
+
+/* SEO용 텍스트 숨김 */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Hero Typography (Massive Style) */
+.hero-title {
+    font-family: var(--font-head);
+    font-size: 21vw;
+    /* 화면 너비 비례 */
+    font-weight: 700;
+    line-height: 0.9;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0;
+    letter-spacing: -0.02em;
+    color: #000;
+    white-space: normal;
+}
+
+.hero-title .line {
+    display: block;
+}
+
+/* 개별 글자 (애니메이션용) */
+.char {
+    display: inline-block;
+    will-change: font-variation-settings;
+}
+
+/* ==========================================================================
+   6. PROFILE SECTION
+   ========================================================================== */
+.profile-section {
+    background-color: #fff;
+    padding-left: 200px;
+    /* 좌측 여백 강조 */
+}
+
+.profile-wrap {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+}
+
+.profile-img-box {
+    width: 180px;
+    height: 240px;
+    background-color: #eee;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.profile-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info h2 {
+    font-family: var(--font-head);
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.profile-info p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #444;
+}
+
+/* --- Resume Styling --- */
+.resume-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.resume-row {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+.resume-row:last-child {
+    border-bottom: none;
+}
+
+.resume-label {
+    width: 140px;
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: #767676;
+    font-size: 0.9rem;
+    padding-top: 3px;
+}
+
+.resume-content {
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #111;
+}
+
+.resume-item {
+    margin-bottom: 15px;
+}
+
+.resume-item:last-child {
+    margin-bottom: 0;
+}
+
+.date {
+    display: block;
+    font-size: 0.85rem;
+    color: #767676;
+    margin-top: 2px;
+}
+
+/* Skill Icons */
+.skill-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.skill-badge {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background-color: #fff;
+    font-family: var(--font-body);
+}
+
+/* --- Typewriter Cursor Effect --- */
+.typing-cursor::after {
+    content: '|';
+    display: inline-block;
+    margin-left: 4px;
+    font-weight: 400;
+    color: currentColor;
+    animation: blink-cursor 0.8s step-end infinite;
+}
+
+@keyframes blink-cursor {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+.hidden-text {
+    visibility: hidden;
+}
+
+/* ==========================================================================
+   7. WORK SECTION (PROJECTS)
+   ========================================================================== */
+.work-section .project-header {
+    display: flex;
+    justify-content: space-between;
+
+    align-items: flex-end;
+
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.p-num {
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: #767676;
+}
+
+.p-title {
+    font-family: var(--font-head);
+    font-size: 3.5rem;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.p-cat {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.project-visual {
+    width: 100%;
+    max-width: 1320px;
+    height: auto;
+    background-color: transparent;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 50px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-visual img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid #ddd;
+    margin-bottom: -1px;
+}
+
+.project-links {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    color: var(--text-color);
+    font-family: var(--font-head);
+    font-size: 1rem;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background-color: var(--text-color);
+    color: #fff;
+}
+
+/* ==========================================================================
+   8. MOBILE RESPONSIVE (Max-Width: 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+
+    /* 1. Layout Reset */
+    .main-container {
+        flex-direction: column;
+        /* 다시 위에서 아래로 흐르게 */
+        border: none;
+    }
+
+    /* 2. Navigation Container (Bottom FNB Style) */
+    .navigation {
+        width: 100%;
+        height: 60px;
+        /* 버튼 높이 */
+        position: fixed;
+        /* 화면 하단 고정 */
+        bottom: 0;
+        top: auto;
+        /* 상단 고정 해제 */
+        left: 0;
+
+        flex-direction: row;
+        padding: 0;
+        /* 여백 제거하고 꽉 채움 */
+
+        background-color: #fff;
+        /* 배경 흰색 */
+        border-right: none;
+        border-top: 2px solid #111;
+        /* 상단에 굵은 선 (Raw 느낌) */
+        border-bottom: none;
+
+        z-index: 9999;
+        /* 항상 최상위 */
+    }
+
+    /* 3. Logo (Mobile: Top Left Fixed) */
+    /* 로고는 하단바에 넣으면 좁으므로, 상단에 별도로 고정시킵니다 */
+    .nav-logo {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        margin: 0;
+        font-size: 1.2rem;
+        z-index: 9998;
+        /* 네비게이션보다 한 단계 아래 */
+
+        /* 스크롤 시 배경이 없으면 글자가 겹치므로 살짝 배경 추가 (선택) */
+        /* background: #fff; padding: 5px; border: 1px solid #000; */
+    }
+
+    .nav-footer {
+        display: none;
+    }
+
+    /* 모바일에서 푸터 숨김 */
+
+    /* 4. Menu Items (Horizontal Layout) */
+    .nav-menu {
+        display: flex;
+        flex-direction: row;
+        /* 가로 정렬 */
+        width: 100%;
+        height: 100%;
+        gap: 0;
+        /* 간격 없음 */
+    }
+
+    .nav-link {
+        flex: 1;
+        /* 4개의 메뉴가 균등하게 공간 차지 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 0.9rem;
+        /* 글자 크기 축소 */
+        padding: 0;
+        margin: 0;
+        border-right: 1px solid #eee;
+        /* 메뉴 사이 얇은 구분선 */
+        background-color: #fff;
+
+        /* 텍스트가 진행바 위로 오게 설정 */
+        z-index: 1;
+    }
+
+    .nav-link:last-child {
+        border-right: none;
+    }
+
+    /* 5. Mobile Progress Bar Design */
+    .nav-progress {
+        /* 하단이 아니라 배경처럼 차오르게 디자인 */
+        top: 0;
+        bottom: 0;
+        left: 0;
+        height: 100%;
+        /* 높이 꽉 채움 */
+        width: 0%;
+
+        /* 투명한 검정색으로 차오르게 하여 글자가 보이게 함 */
+        background-color: rgba(0, 0, 0, 0.1);
+
+        /* 또는 강조색을 쓴다면 아래 주석 해제 */
+        /* background-color: var(--accent-color); opacity: 0.2; */
+
+        z-index: -1;
+        /* 글자 뒤로 보냄 */
+    }
+
+    /* 활성화 된 메뉴 스타일 */
+    .nav-link.active {
+        font-weight: 900;
+        background-color: #f8f8f8;
+        /* 활성 상태 배경 미세 변경 */
+        transform: none;
+        /* PC용 이동 효과 제거 */
+    }
+
+    /* ----------------------------------------------------
+       Below styles are same as before (Content Adjustment)
+       ---------------------------------------------------- */
+
+    /* Content Area */
+    .content {
+        width: 100%;
+        border-right: none;
+        overflow-x: hidden;
+        margin-bottom: 60px;
+        /* 하단 네비게이션 높이만큼 여백 확보 */
+    }
+
+    /* Sections */
+    section {
+        padding: 60px 20px;
+        /* 상하 패딩 조정 */
+        min-height: auto;
+    }
+
+    /* Landing Section */
+    .landing-section {
+        height: 100vh;
+        /* 랜딩은 꽉 차게 */
+    }
+
+    /* Hero Title */
+    .hero-title {
+        font-size: 18vw;
+        line-height: 0.9;
+    }
+
+    /* 🔄 리셋 버튼 위치 조정 */
+    #reset-btn {
+        /* 기존 20px -> 80px로 변경 (하단 바 높이만큼 위로 올림) */
+        bottom: 80px !important; 
+        
+        /* 혹시 오른쪽 여백도 너무 붙었으면 조절 가능 */
+        right: 20px; 
+    }
+
+    /* Project Layout */
+    .project-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .p-title {
+        font-size: 2.5rem;
+        word-break: keep-all;
+    }
+
+    .p-cat {
+        text-align: left;
+    }
+
+    .project-visual {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    .project-links {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Profile Layout */
+    .profile-section {
+        padding-left: 20px;
+    }
+
+    .profile-wrap {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .profile-img-box {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3/4;
+        max-width: 300px;
+        /* 너무 커지지 않게 제한 */
+    }
+
+    .resume-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .resume-label {
+        width: 100%;
+        margin-bottom: 5px;
+        border-bottom: none;
+    }
+
+    #physics-container canvas {
+        pointer-events: none !important; 
+    }
+}
+
+/* =========================================
+   0. PRELOADER (The Percentage)
+   ========================================= */
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #000;
+    /* 검은 배경 */
+    z-index: 99999;
+    /* 모든 것보다 위에 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+    /* 커튼이 걷히는 느낌 */
+}
+
+#loader-count {
+    font-family: var(--font-head);
+    /* Oswald 폰트 */
+    font-size: 6vw;
+    /* 화면 꽉 차게 */
+    font-weight: 700;
+    color: #fff;
+    /* 흰색 숫자 */
+    line-height: 1;
+}
+
+/* 로딩 끝났을 때 적용할 클래스 */
+.loader-hidden {
+    transform: translateY(-100%);
+    /* 위로 쓱 올라감 */
+}
+
+/* 로딩 중일 때 스크롤 막기 위한 클래스 */
+body.no-scroll {
+    overflow: hidden !important;
+}
