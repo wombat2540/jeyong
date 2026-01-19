@@ -486,18 +486,22 @@ section {
 
 .btn {
     padding: 12px 30px;
-    border: 1px solid var(--border-color);
+    background-color: var(--text-color); 
+    color: #fff; 
+    border: 1px solid var(--text-color);
+    
     text-decoration: none;
-    color: var(--text-color);
     font-family: var(--font-head);
     font-size: 1rem;
     text-transform: uppercase;
     transition: 0.3s;
+    display: inline-block; /* 버튼의 크기 유지를 위해 권장 */
 }
 
 .btn:hover {
-    background-color: var(--text-color);
-    color: #fff;
+    background-color: transparent; 
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 
 /* ==========================================================================
@@ -769,4 +773,5 @@ section {
 /* 로딩 중일 때 스크롤 막기 위한 클래스 */
 body.no-scroll {
     overflow: hidden !important;
+
 }
