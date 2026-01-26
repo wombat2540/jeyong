@@ -98,8 +98,8 @@ function createWalls() {
 
     // 글자 생성 설정
     let letters = [];
-    const word1 = "JEYONG";
-    const word2 = "JEONG";
+    const word1 = "HELLO";
+    const word2 = "I'M JJY";
     let fontSize = Math.min(viewWidth * 0.25, 450); 
     
     function createTextBodies() {
@@ -442,4 +442,5 @@ window.addEventListener('resize', () => {
             // 물리 엔진이 눈치채지 못하게 이벤트를 차단 -> 브라우저가 스크롤함
             event.stopImmediatePropagation();
         }
+
     }, { capture: true });
